@@ -1,7 +1,9 @@
-import { GetStaticProps } from 'next';
+// import { GetStaticProps } from 'next';
+import Head from 'next/head';
 
-import { getPrismicClient } from '../services/prismic';
+// import { getPrismicClient } from '../services/prismic';
 
+import { FiCalendar, FiUser } from 'react-icons/fi';
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
@@ -24,12 +26,70 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home() {
+export default function Home(): JSX.Element {
   // TODO
 
   return (
-    <h1>Home page</h1>
-  )
+    <>
+      <Head>
+        <title> Home | nextjsblog </title>
+      </Head>
+
+      <main className={styles.container}>
+        <img src="/images/Logo.svg" alt="logo" />
+
+        <div className={styles.post}>
+          <strong>POst title</strong>
+          <p>subtitle subtitle subtitle subtitle subtitle subtitle subtitle </p>
+          <div className={styles.postInfo}>
+            <time>
+              <FiCalendar />
+              15 mar 2021
+            </time>
+
+            <span>
+              <FiUser />
+              Joseph Oliveira
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.post}>
+          <strong>POst title</strong>
+          <p>subtitle subtitle subtitle subtitle subtitle subtitle subtitle </p>
+          <div className={styles.postInfo}>
+            <time>
+              <FiCalendar />
+              15 mar 2021
+            </time>
+
+            <span>
+              <FiUser />
+              Joseph Oliveira
+            </span>
+          </div>
+        </div>
+
+        <div className={styles.post}>
+          <strong>POst title</strong>
+          <p>subtitle subtitle subtitle subtitle subtitle subtitle subtitle </p>
+          <div className={styles.postInfo}>
+            <time>
+              <FiCalendar />
+              15 mar 2021
+            </time>
+
+            <span>
+              <FiUser />
+              Joseph Oliveira
+            </span>
+          </div>
+        </div>
+
+        <span className={styles.loadMorePosts}>Carregar mais posts</span>
+      </main>
+    </>
+  );
 }
 
 // export const getStaticProps = async () => {
