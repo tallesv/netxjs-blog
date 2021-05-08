@@ -3,15 +3,18 @@
   max-width: 926px;
   margin: 5rem auto;
   padding: 0 2rem;
-
-  img {
-    margin-bottom: 3.4rem;
-  }
 }
 
 .post {
   strong {
     font-size: 1.7rem;
+    transition: color 0.2s;
+  }
+
+  strong:hover {
+    color: var(--highlight);
+    text-decoration: underline;
+    cursor: pointer;
   }
 
   p {
@@ -63,4 +66,11 @@
   font-size: 1.125rem;
   padding-top: 4.125rem;
   display: block;
+  transition: filter 0.2s;
+}
+
+.loadMorePosts:hover {
+  filter: brightness(0.7);
+  text-decoration: underline;
+  cursor: pointer;
 }
