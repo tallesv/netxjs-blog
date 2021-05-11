@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/no-danger */
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -5,6 +6,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Prismic from '@prismicio/client';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
@@ -45,22 +47,12 @@ export default function Post({ post }: PostProps): JSX.Element {
     return previousValue + wordTotal;
   }, 0);
 
-  const timeExpectedToRead = Math.round(totalWords / 200);
+  const timeExpectedToRead = Math.round(totalWords / 200) + 1;
 
-  if (!post) {
-    return (
-      <>
-        <Head>
-          <title>{` Post `}</title>
-        </Head>
+  const router = useRouter();
 
-        <Header />
-
-        <main className={commonStyles.container}>
-          <h2 className={styles.title}>Carregando...</h2>
-        </main>
-      </>
-    );
+  if (router.isFallback) {
+    return <div>Carregando...</div>;
   }
 
   return (
@@ -83,7 +75,9 @@ export default function Post({ post }: PostProps): JSX.Element {
         <div className={commonStyles.postInfo}>
           <time>
             <FiCalendar />
-            {post.first_publication_date}
+            {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
+              locale: ptBR,
+            })}
           </time>
           <span>
             <FiUser />
@@ -96,10 +90,14 @@ export default function Post({ post }: PostProps): JSX.Element {
         </div>
 
         {post.data.content.map(content => (
-          <div className={styles.content}>
+          <div
+            key={content.heading !== '' ? content.heading : Math.random() * 100}
+            className={styles.content}
+          >
             <strong className={styles.heading}>{content.heading}</strong>
-            {content.body.map(body => (
+            {content.body.map((body, index) => (
               <div
+                key={`${body.text}_${index}`}
                 className={styles.postContent}
                 dangerouslySetInnerHTML={{ __html: body.text }}
               />
@@ -113,9 +111,12 @@ export default function Post({ post }: PostProps): JSX.Element {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
-  const posts = await prismic.query([
-    Prismic.predicates.at('document.type', 'posts'),
-  ]);
+  const posts = await prismic.query(
+    [Prismic.predicates.at('document.type', 'posts')],
+    {
+      pageSize: 2,
+    }
+  );
 
   const paths = posts.results.map(post => ({ params: { slug: post.uid } }));
 
@@ -132,15 +133,11 @@ export const getStaticProps: GetStaticProps = async context => {
   const response = await prismic.getByUID('posts', String(slug), {});
 
   const post = {
-    first_publication_date: format(
-      new Date(response.first_publication_date),
-      'dd MMM yyyy',
-      {
-        locale: ptBR,
-      }
-    ),
+    uid: response.uid,
+    first_publication_date: response.first_publication_date,
     data: {
       title: response.data.title,
+      subtitle: response.data.subtitle,
       banner: {
         url: response.data.banner.url,
       },

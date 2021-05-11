@@ -78,7 +78,9 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
             <div className={commonStyles.postInfo}>
               <time>
                 <FiCalendar />
-                {post.first_publication_date}
+                {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
+                  locale: ptBR,
+                })}
               </time>
 
               <span>
@@ -118,13 +120,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
   const results = postsResponse.results.map(post => ({
     uid: post.uid,
-    first_publication_date: format(
-      new Date(post.first_publication_date),
-      'dd MMM yyyy',
-      {
-        locale: ptBR,
-      }
-    ),
+    first_publication_date: post.first_publication_date,
     data: post.data,
   }));
 
