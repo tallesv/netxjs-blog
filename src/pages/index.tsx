@@ -1,5 +1,6 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 
 import { FiCalendar, FiUser } from 'react-icons/fi';
 import Prismic from '@prismicio/client';
@@ -65,14 +66,16 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         <title> Home | nextjsblog </title>
       </Head>
 
-      <main className={commonStyles.container}>
-        <Header />
+      <Header />
 
+      <main className={commonStyles.container}>
         {posts.map(post => (
           <div key={post.uid} className={styles.post}>
-            <strong>{post.data.title}</strong>
+            <Link href={`/post/${post.uid}`}>
+              <strong>{post.data.title}</strong>
+            </Link>
             <p>{post.data.subtitle}</p>
-            <div className={styles.postInfo}>
+            <div className={commonStyles.postInfo}>
               <time>
                 <FiCalendar />
                 {post.first_publication_date}

@@ -1,5 +1,31 @@
 .container {
   max-width: 926px;
-  margin: 5rem auto;
+  margin: 0 auto;
   padding: 0 2rem;
+}
+
+.postInfo {
+  margin-top: 1.56rem;
+  color: var(--info);
+  display: flex;
+
+
+  time {
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 0.7rem;
+    }
+  }
+
+  span {
+    margin-left: 1.875rem;
+    display: flex;
+    align-items: center;
+
+    svg {
+      margin-right: 0.7rem;
+    }
+  }
 }
