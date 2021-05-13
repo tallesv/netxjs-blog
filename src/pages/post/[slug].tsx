@@ -1,6 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/no-danger */
 import { format } from 'date-fns';
+import Link from 'next/link';
 import { ptBR } from 'date-fns/locale';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
@@ -33,9 +34,10 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
 }
 
-export default function Post({ post }: PostProps): JSX.Element {
+export default function Post({ post, preview }: PostProps): JSX.Element {
   const totalWords = post.data.content.reduce((previousValue, actual) => {
     const text = actual.body.map(body => body.text);
     const wordsArray = text.map(item => item.split(/\s+/));
@@ -63,11 +65,11 @@ export default function Post({ post }: PostProps): JSX.Element {
 
       <Header />
 
-      <img
+      {/* <img
         className={styles.image}
         src={post.data.banner.url}
         alt="post banner"
-      />
+      /> */}
 
       <main className={commonStyles.container}>
         <h2 className={styles.title}>{post.data.title}</h2>
@@ -104,6 +106,14 @@ export default function Post({ post }: PostProps): JSX.Element {
             ))}
           </div>
         ))}
+
+        {preview && (
+          <Link href="/api/exit-preview">
+            <aside className={commonStyles.previewExit}>
+              <a>Sair do modo Preview</a>
+            </aside>
+          </Link>
+        )}
       </main>
     </>
   );
@@ -126,11 +136,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async context => {
-  const { slug } = context.params;
-
+export const getStaticProps: GetStaticProps = async ({
+  preview = false,
+  previewData,
+  params: { slug },
+}) => {
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null,
+  });
 
   const post = {
     uid: response.uid,
@@ -150,6 +164,6 @@ export const getStaticProps: GetStaticProps = async context => {
   };
 
   return {
-    props: { post },
+    props: { post, preview },
   };
 };

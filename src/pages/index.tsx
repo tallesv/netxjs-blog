@@ -48,13 +48,7 @@ export default function Home({
       response.json().then(responseData => {
         const newPosts = responseData.results.map(post => ({
           uid: post.uid,
-          first_publication_date: format(
-            new Date(post.first_publication_date),
-            'dd MMM yyyy',
-            {
-              locale: ptBR,
-            }
-          ),
+          first_publication_date: post.first_publication_date,
           data: post.data,
         }));
         const updatePosts = [...posts, ...newPosts];
@@ -107,11 +101,11 @@ export default function Home({
         )}
 
         {preview && (
-          <aside className={commonStyles.previewExit}>
-            <Link href="/api/exit-preview">
+          <Link href="/api/exit-preview">
+            <aside className={commonStyles.previewExit}>
               <a>Sair do modo Preview</a>
-            </Link>
-          </aside>
+            </aside>
+          </Link>
         )}
       </main>
     </>
