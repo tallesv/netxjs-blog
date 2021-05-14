@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/no-danger */
-import { createRef, useEffect } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { ptBR } from 'date-fns/locale';
@@ -64,7 +63,6 @@ export default function Post({
   const timeExpectedToRead = Math.round(totalWords / 200) + 1;
 
   const router = useRouter();
-  const commentBox = createRef<any>();
 
   if (router.isFallback) {
     return <div>Carregando...</div>;
