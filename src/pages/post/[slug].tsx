@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/no-danger */
+import { createRef, useEffect } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { ptBR } from 'date-fns/locale';
@@ -9,6 +11,7 @@ import Prismic from '@prismicio/client';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { useRouter } from 'next/router';
 import Header from '../../components/Header';
+import Comment from '../../components/Comment';
 
 import { getPrismicClient } from '../../services/prismic';
 
@@ -61,6 +64,7 @@ export default function Post({
   const timeExpectedToRead = Math.round(totalWords / 200) + 1;
 
   const router = useRouter();
+  const commentBox = createRef<any>();
 
   if (router.isFallback) {
     return <div>Carregando...</div>;
@@ -153,6 +157,8 @@ export default function Post({
           )}
         </div>
 
+        <Comment />
+
         {preview && (
           <Link href="/api/exit-preview">
             <aside className={commonStyles.previewExit}>
@@ -230,8 +236,6 @@ export const getStaticProps: GetStaticProps = async ({
       })),
     },
   };
-
-  console.log(previousPost);
 
   return {
     props: {
