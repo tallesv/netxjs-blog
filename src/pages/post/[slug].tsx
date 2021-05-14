@@ -17,6 +17,8 @@ import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
+  uid: string;
   data: {
     title: string;
     banner: {
@@ -34,11 +36,18 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  previousPost: Post | null;
+  nextPost: Post | null;
   preview: boolean;
 }
 
-export default function Post({ post, preview }: PostProps): JSX.Element {
-  const totalWords = post.data.content.reduce((previousValue, actual) => {
+export default function Post({
+  post,
+  preview,
+  previousPost,
+  nextPost,
+}: PostProps): JSX.Element {
+  const totalWords = post?.data.content.reduce((previousValue, actual) => {
     const text = actual.body.map(body => body.text);
     const wordsArray = text.map(item => item.split(/\s+/));
     const wordTotal = wordsArray.reduce(
@@ -91,6 +100,18 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
           </span>
         </div>
 
+        {post.last_publication_date && (
+          <span className={styles.lastUpdated}>
+            <i>{`* editado em ${format(
+              new Date(post.first_publication_date),
+              "dd MMM yyyy', às' HH:mm",
+              {
+                locale: ptBR,
+              }
+            )}`}</i>
+          </span>
+        )}
+
         {post.data.content.map(content => (
           <div
             key={content.heading !== '' ? content.heading : Math.random() * 100}
@@ -106,6 +127,31 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
             ))}
           </div>
         ))}
+
+        <div className={styles.divisorLine} />
+
+        <div className={styles.previousAndNextPost}>
+          {previousPost ? (
+            <Link href={`/post/${previousPost.uid}`}>
+              <div>
+                <span>{previousPost.data.title}</span>
+                <span>Post anterior</span>
+              </div>
+            </Link>
+          ) : (
+            <div />
+          )}
+          {nextPost ? (
+            <Link href={`/post/${nextPost.uid}`}>
+              <div>
+                <span>{nextPost.data.title}</span>
+                <span>Próximo post</span>
+              </div>
+            </Link>
+          ) : (
+            <div />
+          )}
+        </div>
 
         {preview && (
           <Link href="/api/exit-preview">
@@ -146,9 +192,31 @@ export const getStaticProps: GetStaticProps = async ({
     ref: previewData?.ref ?? null,
   });
 
+  const previousPost = await prismic.queryFirst(
+    Prismic.predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: `${response.id}`,
+      orderings: '[document.first_publication_date]',
+    }
+  );
+
+  const nextPost = await prismic.queryFirst(
+    Prismic.predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: `${response.id}`,
+      orderings: '[document.first_publication_date desc]',
+    }
+  );
+
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
+    last_publication_date:
+      response.last_publication_date !== response.first_publication_date
+        ? response.last_publication_date
+        : null,
     data: {
       title: response.data.title,
       subtitle: response.data.subtitle,
@@ -163,7 +231,14 @@ export const getStaticProps: GetStaticProps = async ({
     },
   };
 
+  console.log(previousPost);
+
   return {
-    props: { post, preview },
+    props: {
+      post,
+      preview,
+      previousPost: previousPost || null,
+      nextPost: nextPost || null,
+    },
   };
 };
