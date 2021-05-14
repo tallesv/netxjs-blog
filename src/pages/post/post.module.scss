@@ -75,6 +75,14 @@
     width: 20%;
     cursor: pointer;
 
+    span {
+      transition: filter 0.2s;
+    }
+
+    span:hover {
+      filter: brightness(0.85);
+    }
+
     span:first-child {
       font-size: 1.125rem;
       line-height: 22px;

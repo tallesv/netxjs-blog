@@ -1,7 +1,7 @@
 import { createRef, useEffect } from 'react';
 
 export default function Comment(): JSX.Element {
-  const commentBox = createRef<any>();
+  const commentBox = createRef<HTMLDivElement>();
 
   useEffect(() => {
     async function removeChild(): Promise<void> {
@@ -15,7 +15,7 @@ export default function Comment(): JSX.Element {
       script.setAttribute('src', 'https://utteranc.es/client.js');
       script.setAttribute('crossorigin', 'anonymous');
       script.setAttribute('async', 'true');
-      script.setAttribute('repo', 'tallesv/netxjs-blog');
+      script.setAttribute('repo', 'tallesv/nextjs-blog');
       script.setAttribute('issue-term', 'pathname');
       script.setAttribute('theme', 'photon-dark');
       commentBox.current.appendChild(script);
