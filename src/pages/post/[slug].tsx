@@ -83,6 +83,11 @@ export default function Post({
       /> */}
 
       <main className={commonStyles.container}>
+        <img
+          className={styles.image}
+          src={post.data.banner.url}
+          alt="post banner"
+        />
         <h2 className={styles.title}>{post.data.title}</h2>
 
         <div className={commonStyles.postInfo}>
